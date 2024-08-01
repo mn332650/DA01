@@ -33,4 +33,7 @@ and city not like 'E%'
 and city not like 'O%'
 and city not like 'A%'
 and city not like 'I%';
---ex7: 
+--ex7: order name alphabetically 
+select name 
+from employee
+order by name asc;
