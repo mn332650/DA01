@@ -9,4 +9,27 @@ where countrycode = 'JPN';
 --ex3:
 select city, state 
 from station;
---ex4:
+--ex4: starting with vowels
+select distinct city 
+from station 
+where city like 'a%'
+or city like 'e%'
+or city like 'i%'
+or city like 'o%'
+or city like 'u%';
+--ex5: ending with vowels
+select distinct city 
+from station 
+where city like '%a'
+or city like '%e'
+or city like '%i'
+or city like '%o'
+or city like '%u';
+--ex6: not starting with vowels
+select distinct city
+from station 
+where city not like 'U%'
+and city not like 'E%'
+and city not like 'O%'
+and city not like 'A%'
+and city not like 'I%';
