@@ -3,14 +3,12 @@ Print the results in any order, but exclude duplicates from the answer */
 select distinct city 
 from station
 where ID%2=0 
+  
 --ex2:  difference between the total number of CITY entries in the table and the number of distinct CITY
 select count(city) - count(distinct(city)) as difference
 from station
---ex3: 
-
-
-
-
+  
+--ex3: [come back later] 
 
 /*ex4:find the mean number of items per order on Alibaba,
 rounded to 1 decimal place using tables which includes information on the count of items*/ 
