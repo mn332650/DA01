@@ -8,7 +8,9 @@ where ID%2=0
 select count(city) - count(distinct(city)) as difference
 from station
   
---ex3: [come back later] 
+/*ex3: calculating the amount of error (i.e.:  average monthly salaries)
+and round it up to the next integer*/
+  select 
 
 /*ex4:find the mean number of items per order on Alibaba,
 rounded to 1 decimal place using tables which includes information on the count of items*/ 
