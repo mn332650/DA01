@@ -80,4 +80,52 @@ where case
 end is not null
 group by film_id;
 
+/* tinh tong so tien theo tung loai hoa don high-medium-low 
+cua tung kh
+--high: amount>10
+--medium: 5<= amount <=10
+--low: amount<5 */
 
+select customer_id,
+case 
+	when amount>10 then 'High'
+	when amount between 5 and 10 then 'Medium'
+	when amount <5 then 'Low'
+end as category,
+sum(amount)
+from payment
+group by customer_id, category; -- don't show in an easily viewed format
+
+--USE PIVOT TABLE with CASE WHEN
+
+select customer_id,
+sum(case 
+	when amount>10 then amount
+	else 0
+	end) as High,
+sum(case
+	when amount between 5 and 10 then amount
+	else 0
+	end) as Medium,
+sum(case
+	when amount <5 then amount
+	else 0
+	end) as Low
+from payment
+group by customer_id
+order by customer_id asc;
+
+/*thong ke bao nhieu bo phim duoc danh gia la R, PG, PG-13
+o cac the loai phim long-medium-short */
+
+select 
+case 
+	When length<60 then 'short'
+	When length between 60 and 120 then 'medium'
+	when length>120 then 'long' --OR: else 'long' 
+end as category,
+sum(case when rating='R' then 1 else 0 end) as R,
+sum(case when rating='PG' then 1 else 0 end) as PG,
+sum(case when rating='PG-13' then 1 else 0 end) as PG_13
+from film 
+group by category;
