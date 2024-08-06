@@ -10,7 +10,9 @@ from station
   
 /*ex3: calculating the amount of error (i.e.:  average monthly salaries)
 and round it up to the next integer*/
-  select 
+  
+select ceiling(avg(salary)-avg(replace(salary,'0',''))) --use ceiling de lay can tren as NEXT INT
+from employees
 
 /*ex4:find the mean number of items per order on Alibaba,
 rounded to 1 decimal place using tables which includes information on the count of items*/ 
