@@ -129,3 +129,91 @@ sum(case when rating='PG' then 1 else 0 end) as PG,
 sum(case when rating='PG-13' then 1 else 0 end) as PG_13
 from film 
 group by category;
+
+/* tinh tong so tien theo tung loai hoa don high-medium-low 
+cua tung kh
+--high: amount>10
+--medium: 5<= amount <=10
+--low: amount<5 */
+
+select customer_id,
+case 
+	when amount>10 then 'High'
+	when amount between 5 and 10 then 'Medium'
+	when amount <5 then 'Low'
+end as category,
+sum(amount)
+from payment
+group by customer_id, category; -- don't show in an easily viewed format
+
+--USE PIVOT TABLE with CASE WHEN
+
+select customer_id,
+sum(case 
+	when amount>10 then amount
+	else 0
+	end) as High,
+sum(case
+	when amount between 5 and 10 then amount
+	else 0
+	end) as Medium,
+sum(case
+	when amount <5 then amount
+	else 0
+	end) as Low
+from payment
+group by customer_id
+order by customer_id asc;
+
+/*thong ke bao nhieu bo phim duoc danh gia la R, PG, PG-13
+o cac the loai phim long-medium-short */
+
+select 
+case 
+	When length<60 then 'short'
+	When length between 60 and 120 then 'medium'
+	when length>120 then 'long' --OR: else 'long' 
+end as category,
+sum(case when rating='R' then 1 else 0 end) as R,
+sum(case when rating='PG' then 1 else 0 end) as PG,
+sum(case when rating='PG-13' then 1 else 0 end) as PG_13
+from film 
+group by category; 
+
+--COALESCE
+select scheduled_arrival, 
+actual_arrival, 
+coalesce(actual_arrival,'2020-01-01'), --neu actual_arrival null, thay the ngay do
+coalesce(actual_arrival, scheduled_arrival),--neu actual arrival null, thay the scheduled
+from flights;
+
+select scheduled_arrival, 
+actual_arrival, 
+coalesce(actual_arrival,'2020-01-01'),
+coalesce(actual_arrival, scheduled_arrival),
+coalesce(actual_arrival-scheduled_arrival, '00:00') --thong tin thay the phai cung dang du lieu voi requested data
+from flights;
+
+--CAST: thay the data type 
+select scheduled_arrival, 
+actual_arrival, 
+coalesce(actual_arrival,'2020-01-01'),
+coalesce(actual_arrival, scheduled_arrival),
+coalesce(Cast(actual_arrival-scheduled_arrival as varchar), 'Not Arrived')
+from flights;
+
+--String/Number/Datetime
+select *,
+cast(ticket_no as bigint), -- string to number (string phai chua chu so, no letter), bigint: big integer 
+cast(amount as varchar) --number to string	
+from ticket_flights;
+
+--DATETIME to String
+Select cast(scheduled_departure as varchar) 
+from flights;
+
+/*ex4:find the mean number of items per order on Alibaba,
+rounded to 1 decimal place using tables which include information on the count of items*/ 
+SELECT
+round(cast(sum(item_count*order_occurrences)/sum(order_occurrences) as decimal),1) as mean
+FROM items_per_order;
