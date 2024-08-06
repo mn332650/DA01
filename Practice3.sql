@@ -66,7 +66,7 @@ A user was active on someday if they made at least one activity on that day */
 select activity_date as day,
 count(distinct user_id) as active_users
 from activity
-where activity_date between '2019-06-28' and '2019-07-28'
+where activity_date between '2019-06-28' and '2019-07-27' --SQL get all users until 11:59pm 07-27
 group by activity_date;
 
 /*ex8: find the number of employees hired between the months of January and July in the year 2022 inclusive */
