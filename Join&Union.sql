@@ -64,4 +64,27 @@ left join boarding_passes b on a.seat_no=b.seat_no
 group by right(a.seat_no,1)
 order by count(flight_id) desc;
 
+--FULL OUTER JOIN
+select t1.*, t2.*
+from table1 as t1 
+full join table2 as t2
+on t1.key1=t2.key2;
+
+select count(*)
+from boarding_passes a
+full join tickets b   
+on a.ticket_no=b.ticket_no
+where a.ticket_no is null; --nhung ticket o table a k co boarding_no len may bay, boarding_no co o a but not in b
+
+--JOIN ON MULTIPLE CONDITONS
+--tinh gia trung binh cua tung so ghe may bay
+--B1: output, input
+--seat_no & avg
+
+select a.seat_no, 
+round(avg(b.amount),2) as avg_amount
+from boarding_passes a
+left join ticket_flights b on a.ticket_no=b.ticket_no and a.flight_id=b.flight_id
+group by a.seat_no --gom nhom theo so ghe 
+order by avg(b.amount) asc; 
 
