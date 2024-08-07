@@ -88,3 +88,12 @@ left join ticket_flights b on a.ticket_no=b.ticket_no and a.flight_id=b.flight_i
 group by a.seat_no --gom nhom theo so ghe 
 order by avg(b.amount) asc; 
 
+--JOIN MULTIPLE TABLES
+--so ve, ten kh, gia ve, gio bay, gio ket thuc
+
+select a.ticket_no, a.passenger_name,b.amount, c.scheduled_departure, c.actual_arrival
+from tickets a 
+inner join ticket_flights b on a.ticket_no=b.ticket_no
+inner join flights c on b.flight_id=c.flight_id;
+
+
