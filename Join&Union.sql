@@ -31,5 +31,37 @@ from table1 as t1  --bang tham chieu
 right join table2 as t2  --bang goc, SQL return all values from t1 then match value with t1, if no, return null
 on t1.key1=t2.key2;
 
+--tim thong tin cac chuyen bay cua tung may bay 
+--from tables: aircrafts_data & flights
+
+select t1.aircraft_code,t2.flight_no
+from aircrafts_data t1 --bang goc 
+left join flights t2 on t1.aircraft_code=t2.aircraft_code 
+where t2.flight_no is null; --may bay nao khong co chuyen bay nao
+
+/*ghe nao duoc lua chon thuong xuyen nhat
+(dam bao all seats are listed even it didn't get booked)
+--co cho ngoi ngoi nao chua bao gio duoc dat lai khong
+--hang ghe nao duoc dat thuong xuyen nhat */ -- extract from seat_no
+
+select a.seat_no,
+	count(flight_id) as quantity
+from seats a
+left join boarding_passes b on a.seat_no=b.seat_no
+group by a.seat_no
+order by count(flight_id) desc; --ghe duoc chon thuong xuyen nhat
+
+
+select a.seat_no
+from seats a
+left join boarding_passes b on a.seat_no=b.seat_no
+where b.seat_no is null;
+
+select right(a.seat_no,1) as seat_row,
+count(flight_id) as quantity
+from seats a
+left join boarding_passes b on a.seat_no=b.seat_no
+group by right(a.seat_no,1)
+order by count(flight_id) desc;
 
 
