@@ -96,4 +96,11 @@ from tickets a
 inner join ticket_flights b on a.ticket_no=b.ticket_no
 inner join flights c on b.flight_id=c.flight_id;
 
+/*find first_name, last_name, email and country tu tat ca kh tu Brazil */
 
+select a.first_name, a.last_name, a.email, d.country
+from customer a
+join address b on a.address_id=b.address_id
+join city c on b.city_id=c.city_id
+join country d on c.country_id=d.country_id
+where d.country= 'Brazil';
