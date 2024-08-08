@@ -104,3 +104,36 @@ join address b on a.address_id=b.address_id
 join city c on b.city_id=c.city_id
 join country d on c.country_id=d.country_id
 where d.country= 'Brazil';
+
+--SELF-JOIN
+
+CREATE TABLE employee (
+	employee_id INT,
+	name VARCHAR (50),
+	manager_id INT
+);
+
+INSERT INTO employee 
+VALUES
+	(1, 'Liam Smith', NULL),
+	(2, 'Oliver Brown', 1),
+	(3, 'Elijah Jones', 1),
+	(4, 'William Miller', 1),
+	(5, 'James Davis', 2),
+	(6, 'Olivia Hernandez', 2),
+	(7, 'Emma Lopez', 2),
+	(8, 'Sophia Andersen', 2),
+	(9, 'Mia Lee', 3),
+	(10, 'Ava Robinson', 3);
+
+select emp.employee_id,emp.name as emp_name, emp.manager_id,mng.name as mng_name
+from employee as emp
+left join employee as mng on emp.manager_id=mng.employee_id;
+
+/*tim nhung bo phim co cung thoi luong phim
+output: title1, title2, length */
+
+select f1.title as title1, f2.title as title2, f1.length 
+from film as f1
+join film as f2 on f1.length=f2.length
+where f1.title <> f2.title;
