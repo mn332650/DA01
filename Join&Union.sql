@@ -137,3 +137,24 @@ select f1.title as title1, f2.title as title2, f1.length
 from film as f1
 join film as f2 on f1.length=f2.length
 where f1.title <> f2.title;
+
+--UNION & UNION ALL
+--NOTE: # of Columns from tables must be similar
+--Data type from the same column must be the same
+--UNION discard duplicates but UNION ALL get all 
+
+select col1, col2,col3,...,coln
+from table 1
+union/union all 
+select col1, col2, col3,...,coln
+from table2
+union/union all
+select col,col2,col3,...,coln
+from table3;
+
+select first_name, 'actor' as source from actor --as source to distinguish first_name from which table 
+union all
+select first_name, 'customer' as source from customer
+union all
+select first_name, 'staff' as source from staff
+order by first_name;
