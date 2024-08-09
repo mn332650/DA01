@@ -20,4 +20,29 @@ as activation_rate
 from emails e  
 left join texts t on e.email_id=t.email_id;
 
+/*ex3: */
+
+
+
+
+
+
+
+
+/*ex4: Write a solution to report the ids and the names of all managers, the number of employees who report directly to them,
+and the average age of the reports rounded to the nearest integer. Return the result table ordered by employee_id */
+--select * and then see the overall table first then will know which table to grab data
+select
+mng.employee_id,
+mng.name,
+count(emp.employee_id) as reports_count,
+round(avg(emp.age),0) as average_age
+from employees emp
+join employees mng on mng.employee_id=emp.reports_to
+group by mng.employee_id
+order by mng.employee_id asc;
+
+
+
+
 
