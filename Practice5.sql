@@ -20,12 +20,16 @@ as activation_rate
 from emails e  
 left join texts t on e.email_id=t.email_id;
 
-/*ex3: */
+/*ex3:Write a query to obtain a breakdown of the time spent sending vs. opening snaps as a percentage of total time spent on these activities grouped by age group. 
+Round the percentage to 2 decimal places in the output */
 
-
-
-
-
+SELECT b.age_bucket,
+ROUND(100.0*SUM(CASE WHEN activity_type = 'send' THEN time_spent END)::decimal/SUM(CASE WHEN activity_type = 'send' or activity_type = 'open' THEN time_spent END)::decimal,2) AS send_perc,
+ROUND(100.0*SUM(CASE WHEN activity_type = 'open' THEN time_spent END)::decimal/SUM(CASE WHEN activity_type = 'send' or activity_type = 'open' THEN time_spent END)::decimal,2) AS open_perc
+FROM activities a  
+JOIN age_breakdown b
+ON a.user_id = b.user_id
+GROUP BY age_bucket
 
 /*ex4: A Microsoft Azure Supercloud customer is defined as a customer who has purchased at least one product from every product category listed in the products table.
 Write a query that identifies the customer IDs of these Supercloud customers */
@@ -48,6 +52,25 @@ from employees emp
 join employees mng on mng.employee_id=emp.reports_to
 group by mng.employee_id
 order by mng.employee_id asc;
+
+/*ex6: Write a solution to get the names of products that have at least 100 units ordered in February 2020 and their amount */
+
+select p.product_name,
+sum(o.unit) as unit
+from products p
+join orders o on p.product_id=o.product_id
+where o.order_date between '2020-02-01' and '2020-02-29'
+group by p.product_name
+having sum(o.unit) >=100;
+
+/*ex7: Write a query to return the IDs of the Facebook pages that have zero likes. 
+The output should be sorted in ascending order based on the page IDs */
+
+SELECT a.page_id
+FROM pages a  
+left join page_likes b on a.page_id=b.page_id
+where b.page_id is null 
+order by a.page_id asc;
 
 
 
