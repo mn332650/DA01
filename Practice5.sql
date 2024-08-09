@@ -73,6 +73,83 @@ where b.page_id is null
 order by a.page_id asc;
 
 
+--MID_COURSE TEST
+/*Q1: Tạo danh sách tất cả chi phí thay thế (replacement costs )  khác nhau của các film.
+Question: Chi phí thay thế thấp nhất là bao nhiêu? */
+Select distinct replacement_cost
+from film
+order by replacement_cost asc; --9.99
+
+/*Q2: : Viết một truy vấn cung cấp cái nhìn tổng quan về số lượng phim 
+có chi phí thay thế trong các phạm vi chi phí sau
+1.	low: 9.99 - 19.99
+2.	medium: 20.00 - 24.99
+3.	high: 25.00 - 29.99
+Question: Có bao nhiêu phim có chi phí thay thế thuộc nhóm “low”? */
+select
+case when replacement_cost between '9.99' and '19.99' then 'Low'
+	when replacement_cost between '20.00' and '24.99' then 'Medium'
+	else 'High'
+end as category,
+count(*) as quantity
+from film
+group by category; --514
+
+/*Q3: Tạo danh sách các film_title 
+bao gồm tiêu đề (title), độ dài (length) và tên danh mục (category_name) 
+được sắp xếp theo độ dài giảm dần. 
+Lọc kết quả để chỉ các phim trong danh mục 'Drama' hoặc 'Sports'.
+Question: Phim dài nhất thuộc thể loại nào và dài bao nhiêu? */
+
+select a.title, a.length, c.name as category
+from film a 
+join film_category b on a.film_id=b.film_id
+join category c on b.category_id=c.category_id
+where c.name='Drama' or c.name='Sports'
+order by a.length desc; --Sports: 184
+
+/*Q4: Đưa ra cái nhìn tổng quan về số lượng phim (tilte) trong mỗi danh mục (category).
+Question:Thể loại danh mục nào là phổ biến nhất trong số các bộ phim? */
+
+select c.name as category, count(a.title) as quantity
+from film a 
+join film_category b on a.film_id=b.film_id
+join category c on b.category_id=c.category_id
+group by c.name
+order by count(a.title) desc; --Sports: 74 titles
+
+/*Q5: Đưa ra cái nhìn tổng quan về họ và tên của các diễn viên
+cũng như số lượng phim họ tham gia.
+Question: Diễn viên nào đóng nhiều phim nhất?
+Answer: Susan Davis : 54 movies*/
+
+select a.first_name, a.last_name,
+count(b.film_id) as movie_quantity
+from actor a
+join film_actor b on a.actor_id=b.actor_id
+group by a.first_name, a.last_name
+order by count(b.film_id) desc; --Susan Davis: 54 
+
+/*Q6: Tìm các địa chỉ không liên quan đến bất kỳ khách hàng nào.
+Question: Có bao nhiêu địa chỉ như vậy? */
+
+select count(a.address_id) as quantity
+from address a
+left join customer c on a.address_id=c.address_id
+where c.address_id is null; --Quantity=4
+
+/*Q7: : Danh sách các thành phố và doanh thu tương ừng trên từng thành phố 
+Question:Thành phố nào đạt doanh thu cao nhất?
+Answer: Cape Coral : 221.55 */
+
+select a.city, sum(d.amount) as amount
+from city a
+join address b on a.city_id=b.city_id
+join customer c on b.address_id=c.address_id
+join payment d on c.customer_id=d.customer_id
+group by a.city
+order by sum(d.amount) desc;  --CAPE CORAL: 221.55
+
 
 
 
