@@ -150,6 +150,22 @@ join payment d on c.customer_id=d.customer_id
 group by a.city
 order by sum(d.amount) desc;  --CAPE CORAL: 221.55
 
+/*Q8: Task: Tạo danh sách trả ra 2 cột dữ liệu: 
+-	cột 1: thông tin thành phố và đất nước ( format: “city, country")
+-	cột 2: doanh thu tương ứng với cột 1
+Question: thành phố của đất nước nào đat doanh thu cao nhất 
+Answer: United States, Tallahassee : 50.85.*/
+
+select  b.city || ', ' || a.country as place, 
+sum(e.amount) as amount
+from country a
+join city b on a.country_id=b.country_id
+join address c on b.city_id=c.city_id
+join customer d on c.address_id=d.address_id
+join payment e on d.customer_id=e.customer_id
+group by  b.city || ', ' || a.country
+order by sum(e.amount) desc;
+
 
 
 
