@@ -27,9 +27,16 @@ left join texts t on e.email_id=t.email_id;
 
 
 
+/*ex4: A Microsoft Azure Supercloud customer is defined as a customer who has purchased at least one product from every product category listed in the products table.
+Write a query that identifies the customer IDs of these Supercloud customers */
 
+SELECT a.customer_id
+FROM customer_contracts a  
+join products b on a.product_id=b.product_id
+group by a.customer_id
+having count(distinct product_category) >=3;
 
-/*ex4: Write a solution to report the ids and the names of all managers, the number of employees who report directly to them,
+/*ex5: Write a solution to report the ids and the names of all managers, the number of employees who report directly to them,
 and the average age of the reports rounded to the nearest integer. Return the result table ordered by employee_id */
 --select * and then see the overall table first then will know which table to grab data
 select
