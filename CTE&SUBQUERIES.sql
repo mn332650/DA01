@@ -194,5 +194,25 @@ from film
 group by rating; -- chi phi thay the lon nhat trong moi loai rating, group by rating
 
 --CTEs: Common Table Expression - bang chua du lieu tam thoi 
+/* WITH + CTE name(name of the temporary table) + AS
+(CTE body - SELECT ... FROM ... WHERE) + SELECT ... FROM CTE table */
 
+/*tim kh co nhieu hon 30 hoa don.
+Output: ma kh, ten kh, so luong hoa don, tong so tien, tgian thue tbinh */
+
+With twt_total_payment as 
+(select customer_id, count(payment_id) as quantity,
+sum(amount) as total_amount
+from payment
+group by customer_id), 
+twt_avg_rental_time as
+(select customer_id, avg(return_date-rental_date) as rental_time
+from rental
+group by customer_id
+	)
+select a.customer_id, a.first_name, b.quantity, b.total_amount, c.rental_time
+from customer a
+join twt_total_payment b on a.customer_id=b.customer_id
+join twt_avg_rental_time c on a.customer_id=c.customer_id
+order by customer_id asc
 
