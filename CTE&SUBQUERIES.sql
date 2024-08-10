@@ -1,10 +1,10 @@
 --SUBQUERIES IN WHERE- truy van con trong 1 truy van 
---Tim nhung hoa don co so tien lown hon so tien trung binh cac hoa don 
+--Tim nhung hoa don co so tien lon hon so tien trung binh cac hoa don 
 
 select avg(amount) as avg_amount from payment; --tinh so tien trung binh cua cac hoa don
 
 select * from payment 
-where amount > (select avg(amount) from payment ); --combine
+where amount > (select avg(amount) from payment ); --combine, put above subquery to the main query
 
 --tim hoa don cua khach hang co ten la Adam 
 
@@ -28,7 +28,7 @@ where customer_id IN (select customer_id from customer);
 
 select film_id, title
 from film
-where length > (select avg(length) from film);
+where length > (select avg(length) from film); 
 
 select film_id
 from inventory
@@ -48,10 +48,12 @@ select customer_id,
 	first_name,
 	last_name, 
 	email
-from customer
+from customer a
+join address b on a.address_id=b.address_id
 where customer_id in (select customer_id from payment 
 group by customer_id
-having sum(amount) >100) ;
+having sum(amount) >100)
+and b.district='California'; --Join with address table to get city information and put filter 'kh from cali' in WHERE clause
 
 select customer_id from payment 
 group by customer_id
