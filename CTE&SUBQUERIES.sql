@@ -214,5 +214,30 @@ select a.customer_id, a.first_name, b.quantity, b.total_amount, c.rental_time
 from customer a
 join twt_total_payment b on a.customer_id=b.customer_id
 join twt_avg_rental_time c on a.customer_id=c.customer_id
-order by customer_id asc
+order by customer_id asc;
+
+/*tim nhung hoa don co so tien cao hon so tien trung binh cua kh do chi tieu
+tren moi hoa don. Output: ma kh, ten kh, so luong hoa don, so tien,
+so tien trung binh cua kh do */
+
+with total_payment as
+(
+	select customer_id, count(payment_id) as payment_quantity
+	from payment 
+	group by customer_id --create table for so luong hoa don 
+),
+avg_payment as 
+(
+	select customer_id, avg(amount) as avg_payment
+	from payment
+	group by customer_id --create table for so tien trung binh cua kh
+	)
+select a.customer_id, a.first_name, b.payment_quantity, d.amount, c.avg_payment
+from customer a
+join total_payment b on a.customer_id=b.customer_id
+join avg_payment c on a.customer_id=c.customer_id
+join payment d on a.customer_id=d.customer_id
+where d.amount > c.avg_payment;
+
+
 
