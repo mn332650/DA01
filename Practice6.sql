@@ -13,9 +13,33 @@ select count(distinct company_id) as duplicate_companies
 from duplicate_jobs
 where job_counts>1 --don't have group by after bc use count right after SELECT 
 
-/*ex2: */
+/*ex2:  write a query to identify the top two highest-grossing products within each category in the year 2022.
+The output should include the category, product, and total spend.*/
 
-
+with ranked_category_appliance as 
+(
+select category, product, 
+sum(spend) as total_spend
+from product_spend
+where extract(year from transaction_date)='2022' 
+and category='appliance'
+group by category, product
+order by sum(spend) DESC 
+limit 2
+),
+ranked_category_electronics as (select category, product, 
+sum(spend) as total_spend
+from product_spend
+where extract(year from transaction_date)='2022' 
+and category='electronics'
+group by category, product
+order by sum(spend) DESC 
+limit 2)
+select category, product, total_spend
+from ranked_category_appliance 
+UNION ALL
+select category, product, total_spend
+from ranked_category_electronics  
 
 /*ex3: query to find how many UHG policy holders made three, or more calls, assuming each call is identified by the case_id column */
 
