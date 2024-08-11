@@ -124,6 +124,13 @@ from distinct_customer
 group by customer_id 
 having count(*) in (select count(*) from product) --if the number of distinct products a customer has purchased matches the total number of products available.
 
+  --OR: Second Solution for ex8: 
+
+select customer_id
+from customer
+group by customer_id
+having count(distinct product_key)=(Select count(*) from product) --
+  
 /*ex9: Find the IDs of the employees whose salary is strictly less than $30000 and whose manager left the company.
 When a manager leaves the company, their information is deleted from the Employees table,
 but the reports still have their manager_id set to the manager that left.
@@ -212,7 +219,19 @@ group by id
 order by num desc 
 limit 1
 
+    --OR: Second way to shorten the code
 
+with cte as 
+(
+  select requester_id as id from requestaccepted
+  union all
+  select accepter_id as id from requestaccepted
+)
+select id, count(*) as num 
+from cte 
+group by id
+order by num desc
+limit 1
 
 
 
