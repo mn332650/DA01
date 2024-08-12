@@ -125,3 +125,32 @@ group by  a.first_name || ' '|| a.last_name,
 d.country
 ) t --cte table to find customers has highest payment from each country
 where t.orders<=3;--Top 3 only
+
+--WINDOW FUNCTION with FIRST_VALUE
+/*so tien thanh toan cho don hang dau tien va gan day nhat cua tung kh */
+
+select * from 
+(
+select customer_id, payment_date, amount, 
+row_number() over(partition by customer_id order by payment_date desc) as orders --payment_date desc=the most recent date
+from payment
+) as a 
+where orders=1; --so thu tu dau tien = first_payment 
+
+     --OR: USE FIRST_VALUE
+
+select customer_id, payment_date, amount, 
+first_value(amount) over(partition by customer_id order by payment_date) as first_amount, --so tien cho don hang dau tien
+	first_value(amount) over(partition by customer_id order by payment_date desc) as last_amount --payment for the most recent amount, date desc
+from payment; --lay gia tri dau tien cua truong amount, phan nhom theo cus_id, 
+
+--WINDOW FUNCTION with LEAD(), LAG()
+                       --LEAD(): day so tien tiep theo len ngang hang voi previous col
+/*tim chenh lech so tien giua cac lan thanh toan cua tung kh */
+
+select customer_id, payment_date, amount, 
+lead(amount) over(partition by customer_id order by payment_date) as next_amount,
+lead(payment_date) over(partition by customer_id order by payment_date) as next_payment_date,
+amount-lead(amount) over(partition by customer_id order by payment_date) as difference 
+from payment
+
