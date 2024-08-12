@@ -145,12 +145,29 @@ first_value(amount) over(partition by customer_id order by payment_date) as firs
 from payment; --lay gia tri dau tien cua truong amount, phan nhom theo cus_id, 
 
 --WINDOW FUNCTION with LEAD(), LAG()
-                       --LEAD(): day so tien tiep theo len ngang hang voi previous col
+                       --LEAD(): tao 1col moi mang du lieu tiep theo so voi dong du lieu hien tai 
+                       --LAG(): same with LEAD() but get du lieu truoc day
 /*tim chenh lech so tien giua cac lan thanh toan cua tung kh */
 
 select customer_id, payment_date, amount, 
 lead(amount) over(partition by customer_id order by payment_date) as next_amount,
 lead(payment_date) over(partition by customer_id order by payment_date) as next_payment_date,
 amount-lead(amount) over(partition by customer_id order by payment_date) as difference 
-from payment
+from payment; --next value
+
+select customer_id, payment_date, amount, 
+lead(amount,3) over(partition by customer_id order by payment_date) as next_amount,
+lead(payment_date,3) over(partition by customer_id order by payment_date) as next_payment_date,
+amount-lead(amount,3) over(partition by customer_id order by payment_date) as difference 
+from payment; --cach nhau bao nhieu hang, vd: cach nhau 3 rows
+
+select customer_id, payment_date, amount, 
+lag(amount) over(partition by customer_id order by payment_date) as previous_amount,
+lag(payment_date) over(partition by customer_id order by payment_date) as previous_payment_date,
+amount-lag(amount) over(partition by customer_id order by payment_date) as difference 
+from payment; --lay so tien previous
+
+/*tra ve doanh thu trong ngay va doanh thu cua ngay hom truoc. 
+Sau do, tinh % tang truong so voi ngay hom truoc */
+
 
