@@ -170,4 +170,18 @@ from payment; --lay so tien previous
 /*tra ve doanh thu trong ngay va doanh thu cua ngay hom truoc. 
 Sau do, tinh % tang truong so voi ngay hom truoc */
 
+with cte_main_payment as
+( 
+select date(payment_date) as payment_date,
+sum(amount) as amount
+from payment
+group by date(payment_date))  --doanh thu trong ngay 
+
+select payment_date,
+amount,
+lag(payment_date) over(order by payment_date) as previous_payment_date,
+lag(amount) over(order by payment_date) as previous_amount, 
+round((amount-lag(amount) over(order by payment_date)
+/lag(amount) over(order by payment_date))*100,2) as percent_diff
+from cte_main_payment 
 
