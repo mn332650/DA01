@@ -61,18 +61,51 @@ from cte_recent_date
 where rank_date=1
 group by transaction_date, user_id;
 
-/*ex5: rolling tweets */
+/*ex5: rolling tweets
+Given a table of tweet data over a specified time period, calculate the 3-day rolling average of tweets for each user.
+Output the user ID, tweet date, and rolling averages rounded to 2 decimal places.
+Notes:
+A rolling average, also known as a moving average or running mean is a time-series technique that examines trends in data over a specified period of time.
+In this case, we want to determine how the tweet count for each user changes over a 3-day period.*/
 
+with t1 as
+(
+SELECT user_id,
+tweet_date,
+sum(tweet_count) as count 
+FROM tweets
+GROUP BY user_id,tweet_date
+order by user_id,tweet_date) --count the #tweets of each user each day
+  
+SELECT user_id,tweet_date,
+ROUND(((count+
+LAG(count,1,0) over(PARTITION BY user_id) +
+LAG(count,2,0) over(PARTITION BY user_id))*1.0)/(
+(CASE when count>0 THEN 1 ELSE 0 END)+
+CASE when LAG(count,1,0) over(PARTITION BY user_id)>0 THEN 1 ELSE 0 END+
+CASE when LAG(count,2,0) over(PARTITION BY user_id)>0 THEN 1 ELSE 0 END),2)
+from t1
 
+/*ex6: Using the transactions table, identify any payments made at the same merchant with the same credit card 
+for the same amount within 10 minutes of each other. Count such repeated payments.
+Assumptions:
+The first transaction of such payments should not be counted as a repeated payment. 
+This means, if there are two transactions performed by a merchant with the same credit card and for the same amount within 10 minutes, 
+there will only be 1 repeated payment.*/
 
-
-
-
-/*ex6: */
-
-
-
-
+with cte as 
+(
+SELECT merchant_id,
+credit_card_id, 
+amount,
+transaction_timestamp,
+lag(transaction_timestamp)OVER(PARTITION BY merchant_id, credit_card_id, amount order by transaction_timestamp) 
+as prev_transaction
+FROM transactions
+where EXTRACT(MINUTE from transaction_timestamp) <= 10
+)
+select COUNT(merchant_id) as payment_count from cte where 
+EXTRACT(MINUTE FROM transaction_timestamp)-EXTRACT(MINUTE FROM prev_transaction) <= 10;
 
 /*ex7: write a query to identify the top two highest-grossing products within each category in the year 2022. 
 The output should include the category, product, and total spend. */
