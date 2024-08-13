@@ -18,4 +18,13 @@ prev_year_spend,
 round((curr_year_spend-prev_year_spend)/prev_year_spend*100,2) as yoy_rate
 from cte_prev_spend;
 
+/*ex2: Write a query that outputs the name of the credit card, and how many cards were issued in its launch month. 
+The launch month is the earliest record in the monthly_cards_issued table for a given card.
+Order the results starting from the biggest issued amount. */
 
+SELECT
+distinct card_name, 
+first_value(issued_amount) over(partition by card_name order by issued_amount, issue_month) 
+as issued_amount
+from monthly_cards_issued
+order by issued_amount desc;
