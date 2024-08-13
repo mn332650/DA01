@@ -44,3 +44,17 @@ coalesce( --return the first non-null value in the list
     else lead(student) over()                                --else=odd number, return the next student
     end, student) as student
 from seat_rank;
+
+
+/*ex4: restaurant growth */
+
+
+
+
+
+
+
+
+
+
+
