@@ -21,12 +21,17 @@ and a.date1=b.order_date;
 rounded to 2 decimal places. In other words, you need to count the number of players that logged in
 for at least two consecutive days starting from their first login date, then divide that number by the total number of players*/
 
-
-
-
-
-
-
+with cte_first_login_date as 
+(
+select player_id, 
+ min(event_date) as date1
+ from activity
+ group by player_id      --find the first login date for each player
+)
+select 
+round(sum(datediff(b.event_date,a.date1)=1)/ count(distinct b.player_id),2) as fraction  
+from cte_first_login_date a
+join activity b on a.player_id=b.player_id                                                                                                             
 
 /*ex3: Write a solution to swap the seat id of every two consecutive students.
 If the number of students is odd, the id of the last student is not swapped.
@@ -46,7 +51,43 @@ coalesce( --return the first non-null value in the list
 from seat_rank;
 
 
-/*ex4: restaurant growth */
+/*ex4: restaurant growth 
+You are the restaurant owner and you want to analyze a possible expansion (there will be at least one customer every day).
+Compute the moving average of how much the customer paid in a seven days window (i.e., current day + 6 days before). 
+average_amount should be rounded to two decimal places.
+Return the result table ordered by visited_on in ascending order. */
+
+select
+    a.visited_on as visited_on,
+    sum(amount) as amount,
+    round(sum(amount)/7, 2) as average_amount
+from
+(select distinct visited_on from Customer) a
+left join Customer b
+on datediff(a.visited_on, b.visited_on) >= 0 --first day
+and datediff(a.visited_on, b.visited_on) <= 6  --after 6 days
+group by a.visited_on
+having count(distinct b.visited_on) = 7
+order by visited_on;
+
+/*ex8: Write a solution to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10.
+Return the result table in any order. */
+
+with cte as
+(
+    select *, 
+    dense_rank() over(partition by product_id order by change_date desc) as rn from products --rank *, phan cum by product_id, order by change_date desc so we will get the biggest value in the main code
+    where change_date <='2019-08-16'
+)
+select product_id, 
+new_price as price
+from cte
+where rn=1   --top value of each partition, top 1
+union
+select product_id, 10 --if product id not in the cte, then product_id will go with 10 price
+from products
+where product_id not in (select product_id from cte);
+
 
 
 
