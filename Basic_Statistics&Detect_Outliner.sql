@@ -137,6 +137,16 @@ where users in (select users from twt_outlier); -- delete the old table with out
 
 --Tim address bi trung lap, loai ban ghi cu hon
 
+select * from 
+	(
+select 
+	row_number() over(partition by address order by last_update) as stt,
+	*
+from address) a 
+where stt>1; --phan cum theo address > address bi trung lap se co nhieu hon 1 stt
+
+select * from address
+where address='1074 Binzhow Manor';
 
 
 
