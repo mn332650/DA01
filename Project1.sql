@@ -159,6 +159,71 @@ set month_id=extract(month from orderdate);
 update sales_dataset_rfm_prj
 set year_id=extract(year from orderdate);
 
+/*5/ Hãy tìm outlier (nếu có) cho cột QUANTITYORDERED và 
+hãy chọn cách xử lý cho bản ghi đó (2 cách) */
+
+--BOXPLOT
+
+with cte as
+(
+select 
+Q1-1.5*IQR as min_value, 
+Q3+1.5*IQR as max_value
+from
+(
+select 
+percentile_cont(0.25) within group(order by quantityordered) as Q1,-- find Q1
+percentile_cont(0.75) within group(order by quantityordered) as Q3,-- find Q3
+percentile_cont(0.75) within group(order by quantityordered)-percentile_cont(0.25) within group(order by quantityordered) as IQR
+from sales_dataset_rfm_prj) as a)
+
+select * from sales_dataset_rfm_prj
+where quantityordered<(select min_value from cte)
+or quantityordered>(select max_value from cte) --return all values that are outliers
+
+--Z-Score
+
+select avg(quantityordered),
+stddev(quantityordered) 
+from sales_dataset_rfm_prj;
+
+with cte as 
+(
+select ordernumber, 
+quantityordered,
+(select avg(quantityordered)
+from sales_dataset_rfm_prj) as avg,
+(select stddev(quantityordered) 
+from sales_dataset_rfm_prj) as stddev
+from sales_dataset_rfm_prj) 
+, twt_outlier as (	
+select ordernumber,quantityordered, (quantityordered-avg)/stddev as z_score
+from cte
+where abs((quantityordered-avg)/stddev)>3)
+	
+update sales_dataset_rfm_prj 
+set quantityordered=(select avg(quantityordered) from sales_dataset_rfm_prj)
+where quantityordered in (select quantityordered from twt_outlier)
+
+/* DELETE STATEMENT 
+
+delete from sales_dataset_rfm_prj 
+where quantityordered in (select quantityordered from twt_outlier) */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
