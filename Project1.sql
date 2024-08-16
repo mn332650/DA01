@@ -203,12 +203,16 @@ where abs((quantityordered-avg)/stddev)>3)
 	
 update sales_dataset_rfm_prj 
 set quantityordered=(select avg(quantityordered) from sales_dataset_rfm_prj)
-where quantityordered in (select quantityordered from twt_outlier)
+where quantityordered in (select quantityordered from twt_outlier);
 
 /* DELETE STATEMENT 
 
 delete from sales_dataset_rfm_prj 
-where quantityordered in (select quantityordered from twt_outlier) */
+where quantityordered in (select quantityordered from twt_outlier) */ --run delete with cte statement but without update
+
+/*Sau khi làm sạch dữ liệu, hãy lưu vào bảng mới  tên là SALES_DATASET_RFM_PRJ_CLEAN */
+Create table sales_dataset_rfm_prj_clean
+as select * from sales_dataset_rfm_prj;
 
 
 
