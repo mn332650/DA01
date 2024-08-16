@@ -130,8 +130,34 @@ set contactlastname=initcap(substring(contactfullname from 1 for position('-' in
 update sales_dataset_rfm_prj
 set contactfirstname=initcap(substring(contactfullname from position('-' in contactfullname)+1));
 	
- 
+ /* 4/ Thêm cột QTR_ID, MONTH_ID, YEAR_ID lần lượt là 
+Qúy, tháng, năm được lấy ra từ ORDERDATE */
 
+alter table sales_dataset_rfm_prj
+add column qtr_id int;
+
+alter table sales_dataset_rfm_prj
+add column month_id int;
+
+alter table sales_dataset_rfm_prj
+add column year_id int;
+
+select * from sales_dataset_rfm_prj;
+
+select orderdate,
+extract(month from orderdate) as month,
+extract(year from orderdate) as year,
+extract(quarter from orderdate) as quarter
+from sales_dataset_rfm_prj;
+
+update sales_dataset_rfm_prj
+set qtr_id=extract(quarter from orderdate);
+
+update sales_dataset_rfm_prj
+set month_id=extract(month from orderdate);
+
+update sales_dataset_rfm_prj
+set year_id=extract(year from orderdate);
 
 
 
