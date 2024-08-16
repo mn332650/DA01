@@ -85,7 +85,50 @@ alter table SALES_DATASET_RFM_PRJ
 alter column
 	dealsize type varchar(10) using(trim(dealsize)::varchar(10));
 
+/* 2/ Check NULL/BLANK (‘’)  ở các trường: ORDERNUMBER, 
+QUANTITYORDERED, PRICEEACH, ORDERLINENUMBER, SALES, ORDERDATE */
 
+select ORDERNUMBER from sales_dataset_rfm_prj 
+where ordernumber is null; 
+
+select QUANTITYORDERED from sales_dataset_rfm_prj 
+where QUANTITYORDERED is null; 
+
+select PRICEEACH from sales_dataset_rfm_prj 
+where PRICEEACH is null; 
+
+select ORDERLINENUMBER from sales_dataset_rfm_prj 
+where ORDERLINENUMBER is null; 
+
+select SALES from sales_dataset_rfm_prj 
+where SALES is null;
+
+select ORDERDATE from sales_dataset_rfm_prj 
+where ORDERDATE is null;
+
+/*3/ Thêm cột CONTACTLASTNAME, CONTACTFIRSTNAME được tách ra từ CONTACTFULLNAME
+Chuẩn hóa CONTACTLASTNAME, CONTACTFIRSTNAME theo định dạng chữ cái đầu tiên viết hoa,
+chữ cái tiếp theo viết thường. Hint: ( ADD column sau đó UPDATE) */
+
+alter table sales_dataset_rfm_prj
+add column contactlastname varchar(50);
+
+alter table sales_dataset_rfm_prj
+add column contactfirstname varchar(50);
+	
+select * from sales_dataset_rfm_prj; --TABLE
+
+select initcap(substring(contactfullname from 1 for position('-' in contactfullname)-1))
+from sales_dataset_rfm_prj; --lastname
+
+select 
+initcap(substring(contactfullname from position('-' in contactfullname)+1))
+from sales_dataset_rfm_prj; --firstname
+
+update sales_dataset_rfm_prj
+set contactlastname=initcap(substring(contactfullname from 1 for position('-' in contactfullname)-1));
+update sales_dataset_rfm_prj
+set contactfirstname=initcap(substring(contactfullname from position('-' in contactfullname)+1));
 	
  
 
