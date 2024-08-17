@@ -27,9 +27,27 @@ CALCULATION:
 2/ Customer Churn= 1-Customer retention rate
 (KH left)
 
-3/ Net dollar( or net revenue) retention= n/ $gia tri first month
+3/ Net dollar( or net revenue) retention= n/ $gia tri first month */
 
+/* B1: EXPLORE and CLEAN DATA
+- Chung ta dang quan tam den truong nao?
+- Check null
+- Chuyen doi kieu du lieu
+- So tien va so luong >0
+- Check dup */
 
+--541909 records, 135080 records of customerid null
+
+select count(*) from online_retail --check how many records are there in a table
+
+Select * from online_retail
+where customerid='';-- check null values
+
+Select count(*) from online_retail
+where customerid=''; -- clean null values steps!!!
+
+Select * from online_retail
+where customerid<>''; -- values that are not null
 
 
 
