@@ -61,6 +61,31 @@ select * from cte_oldest;
 Output: month_year ( yyyy-mm), product_id, product_name, sales, cost, profit, rank_per_month
 Hint: Sử dụng hàm dense_rank() */
 
+with cte_prod_profit as --calculate sales, cost, profit of each product_id in time period 
+(select format_date('%Y-%m',a.created_at) as month_year, a.product_id, b.name as product_name,   --Y in capital letter to make the right format
+round(sum(a.sale_price),2) as sales, --total doanh thu
+round(b.cost,2) as cost, --expense
+round(sum(a.sale_price)-sum(b.cost),2) as profit --loi nhuan
+from bigquery-public-data.thelook_ecommerce.order_items a
+join bigquery-public-data.thelook_ecommerce.products b
+on a.id=b.id
+where created_at between '2019-01-01' and '2022-04-30'
+group by format_date('%Y-%m',a.created_at), a.product_id, b.name, b.cost),
+cte_high_profit as 
+(
+select *,
+dense_rank() over(partition by month_year order by profit desc) as rank_per_month --rank profit of each product_id group by month_year
+from cte_prod_profit)
+select * 
+from cte_high_profit 
+where rank_per_month <=5
+order by month_year asc;
+
+/* 5. Thống kê tổng doanh thu theo ngày của từng danh mục sản phẩm (category) trong 3 tháng qua ( giả sử ngày hiện tại là 15/4/2022)
+Output: dates (yyyy-mm-dd), product_categories, revenue */
+
+
+
 
 
 
