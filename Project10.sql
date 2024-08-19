@@ -84,7 +84,19 @@ order by month_year asc;
 /* 5. Thống kê tổng doanh thu theo ngày của từng danh mục sản phẩm (category) trong 3 tháng qua ( giả sử ngày hiện tại là 15/4/2022)
 Output: dates (yyyy-mm-dd), product_categories, revenue */
 
-
+with cte_revenue as 
+(select format_date('%Y-%m-%d',a.created_at) as dates,
+b.category,
+round(sum(a.sale_price),2) as total_revenue 
+from bigquery-public-data.thelook_ecommerce.order_items a 
+join bigquery-public-data.thelook_ecommerce.products b 
+on a.id=b.id
+group by format_date('%Y-%m-%d',a.created_at), b.category
+order by dates asc)  --total revenue by dates
+select * 
+from cte_revenue
+where date(dates) BETWEEN date_sub(date '2022-04-15', INTERVAL 3 MONTH) AND date '2022-04-15'
+order by dates asc --filter out the dates
 
 
 
