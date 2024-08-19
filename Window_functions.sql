@@ -21,6 +21,7 @@ From table name;
 Output: ma kh, ngay thanh toan, so tien thanh toan tai ngay, tong so tien da 
 thanh toan, ti le */
 
+
 select a.customer_id, b.first_name, a.payment_date, a.amount,
 (select sum(amount) 
 from payment c
