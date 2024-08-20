@@ -144,5 +144,27 @@ select cohort_date,
 (100-round(100.00* m3/m1,2)) || '%' as m3
 from retention_cohort
 
+/*PART 2: Find Metrics based on dataset */
+
+select month, year, product_category, tpv, tpo, 
+round((tpv-lag(tpv) over(order by month, year)*100)/tpv,2)||'%' as revenue_growth,
+round((tpo-lag(tpo) over(order by month,year)*100)/tpo,2)||'%' as order_growth,
+total_cost, 
+round(tpv-total_cost,2) as total_profit, 
+round(tpv/total_cost,2) as profit_to_cost_ratio 
+from 
+(
+select 
+extract(month from a.created_at) as month,
+extract(year from a.created_at) as year, 
+c.category as product_category, 
+round(sum(b.sale_price),2) as TPV, 
+count(b.order_id) as TPO,
+round(sum(c.cost),2) as total_cost
+from bigquery-public-data.thelook_ecommerce.orders a
+join bigquery-public-data.thelook_ecommerce.order_items b on a.order_id=b.order_id
+join bigquery-public-data.thelook_ecommerce.products c on b.id=c.id
+group by extract(month from a.created_at),
+extract(year from a.created_at), c.category)
 
 
