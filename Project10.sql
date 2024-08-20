@@ -98,6 +98,51 @@ from cte_revenue
 where date(dates) BETWEEN date_sub(date '2022-04-15', INTERVAL 3 MONTH) AND date '2022-04-15'
 order by dates asc --filter out the dates
 
+/* PART 2: */ 
+
+with cte_index as 
+(select user_id, amount, 
+format_date('%Y-%m',first_purchase_date) as cohort_date,
+created_at,
+(extract(year from created_at)-extract(year from first_purchase_date))*12
++ (extract(month from created_at)-extract(month from first_purchase_date))+1 as index
+from 
+(select user_id, 
+round(sale_price,2) as amount, 
+min(created_at) over(partition by user_id) as first_purchase_date,
+created_at
+from bigquery-public-data.thelook_ecommerce.order_items)
+),
+  
+xxx as
+(
+select cohort_date, index, count(distinct user_id) as cnt, 
+round(sum(amount),2) as revenue,
+from cte_index
+group by cohort_date, index),
+customer_cohort as 
+  
+(
+select cohort_date,
+sum(case when index=1 then cnt else 0 end ) as m1,
+sum(case when index=2 then cnt else 0 end ) as m2,
+sum(case when index=3 then cnt else 0 end ) as m3
+from xxx
+group by cohort_date
+order by cohort_date)
+  
+, retention_cohort as (
+select cohort_date, 
+round(100.00* m1/m1,2)||'%' as m1,
+round(100.00* m2/m1,2)|| '%' as m2,
+round(100.00* m3/m1,2) || '%' as m3
+from customer_cohort)
+  
+select cohort_date,
+(100-round(100.00* m1/m1,2))||'%' as m1,
+(100-round(100.00* m2/m1,2))|| '%' as m2,
+(100-round(100.00* m3/m1,2)) || '%' as m3
+from retention_cohort
 
 
 
