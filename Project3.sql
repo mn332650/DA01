@@ -34,8 +34,17 @@ from sales_dataset_rfm_prj_clean
 where month_id=11
 group by month_id, year_id, productline
 order by year_id, revenue desc) as a
-where rank=1;
+where rank=1; -- This query is for the best product line in November each year. 
 --Both November 2003 and 2004, Classic Cars are the best seller product line. No result for 2005
+
+--Question wants the best product line for all November in 3 years combined: 
+select productline, month_id, dealsize, sum(Sales) as revenue, 
+count(ordernumber) as order_number
+from sales_dataset_rfm_prj_clean
+where month_id=11
+group by productline, month_id, dealsize, year_id
+order by sum(sales) desc, count(ordernumber) desc
+limit 1; 
 
 /* 4. Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? 
 Xếp hạng các các doanh thu đó theo từng năm.
