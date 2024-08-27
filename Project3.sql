@@ -19,7 +19,8 @@ row_number() over(partition by year_id order by sum(sales) desc) as rank_per_mon
 from sales_dataset_rfm_prj_clean 
 group by month_id, year_id
 order by year_id, revenue desc) as a
-where rank_per_month=1;
+where rank_per_month=1
+order by order_number desc;
 --Best months: 11/2023, 11/2004, 5/2005
 
 /* 3. Product line nào được bán nhiều ở tháng 11?
